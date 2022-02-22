@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Inti App | Alike Flows</title>
+{% endblock %}
+
+{% block extra_css %}
+    <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.css' %}">
+  <!-- Boostrap-Select -->
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap-select/css/bootstrap-select.min.css' %}">
+
+{% endblock %}
+
+{% block main %}
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Alike Flows</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active">Alike Flows</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Filters</h3>
+                </div>
+                <div class="card-body">
+                  <div class="row-fluid">
+                    <center>
+                      <label>Ecoinvent Version:</label>
+                      <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="version" name="version">
+                        {% for version in versions %} 
+                        <option data-subtext="Format">{{ version.version }}</option>
+                        {% endfor %}
+                      </select>
+
+                      <label>Activity Name:</label>
+                      <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="activity" name="activity">
+                        {% for activity in activities %} 
+                        <option>{{ activity.activity_name }}</option>
+                        {% endfor %}
+                      </select>
+                    </center>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              
+  
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">DataTable with default features</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table id="activitiesTable" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                      <th>Intermediate Exchange Id</th>
+                      <th>Intermediate Exchange Name</th>
+                      <th>Version</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                      <th>Intermediate Exchange Id</th>
+                      <th>Intermediate Exchange Name</th>
+                      <th>Version</th>
+                    </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+  
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script> 
+    <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script> 
+    <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+    <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('.select2').select2()
+      });
+    </script>
+
+   
+
+    <script>
+        function activitiesList(version,activity_name){
+        $.ajax({
+          url: "/inti/activities/alike_flows/?version="+version+"&activity_name="+activity_name,   
+          type: "get",
+          dataType: "json",
+          cache: false,
+          success: function(response){
+            console.log(response);
+            $('#activitiesTable tbody').html("");
+            for(let i = 0;i < response.length; i++){
+              let fila = '<tr>';
+              fila += '<td>' + response[i]['intermediate exchange id'] + '</td>';
+              fila += '<td>' + response[i]['intermediate exchange name'] + '</td>';
+              fila += '<td>' + response[i]['version'] + '</td>';
+              fila += '</tr>';
+              $('#activitiesTable tbody').append(fila);
+            }
+            $('#activitiesTable').DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#activitiesTable_wrapper .col-md-6:eq(0)');
+          },
+          error: function(response){
+            console.log("error");
+          }
+        });
+      }
+    </script>
+
+<script>
+  var selectVersion = document.getElementById('version');
+  var selectActivity = document.getElementById('activity');
+  var selectedOptionVersion = '';
+  var selectedOptionActivity = '';
+  
+  selectVersion.addEventListener('change',
+    function(){
+      selectedOptionVersion = this.options[selectVersion.selectedIndex];
+      if (selectedOptionActivity.text != undefined){
+        $('#activitiesTable').DataTable().destroy();
+        activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
+      }else{
+        console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
+      }
+    });
+  
+    selectActivity.addEventListener('change',
+  function(){
+    selectedOptionActivity = this.options[selectActivity.selectedIndex];
+    if (selectedOptionVersion.text != undefined){
+        $('#activitiesTable').DataTable().destroy();
+        activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
+      }else{
+        console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
+      }
+  });
+</script>
+    
+
+{% endblock %}
