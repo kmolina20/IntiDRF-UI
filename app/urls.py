@@ -16,7 +16,7 @@ Including another URLconf
 from distutils.log import Log
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import include, url
+from django.conf.urls import include
 from django.contrib.auth.views import logout_then_login, LoginView
 from django.contrib.auth.decorators import login_required
 
