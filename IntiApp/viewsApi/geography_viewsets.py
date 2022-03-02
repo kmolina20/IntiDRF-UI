@@ -57,6 +57,6 @@ class GeographyViewSet(viewsets.ModelViewSet):
         d1 = json.loads(s1)
         d2=self.paginate_queryset(d1)
         if len(select) == 0:
-            return Response({'response': 'no data found'})
+            return Response({'response1': 'no data found'})
         else:
             return Response({'response': d2})

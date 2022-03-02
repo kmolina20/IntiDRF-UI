@@ -1,3 +1,4 @@
+import json
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -60,11 +61,13 @@ class IntermediateExchangeViewSet(viewsets.ModelViewSet):
                 "data generator and publication person name": str(row[5]),
                 "version": str(row[6]),
             })
+        s1 = json.dumps(data)
+        d1 = json.loads(s1)
+        d2=self.paginate_queryset(d1)
         if len(select) == 0:
             return Response({'response': 'no data found'})
         else:
-            # print(data)
-            return Response({'response': data})
+            return Response({'response': d2})
     
     @action(detail=True)
     def activities(self, request, pk=None):
@@ -87,8 +90,10 @@ class IntermediateExchangeViewSet(viewsets.ModelViewSet):
                 "activity name": str(row[4]),
                 "activity index id": str(row[5]),
             })
+        s1 = json.dumps(data)
+        d1 = json.loads(s1)
+        d2=self.paginate_queryset(d1)
         if len(select) == 0:
             return Response({'response': 'no data found'})
         else:
-            #print(data)
-            return Response({'response': data})
+            return Response({'response': d2})

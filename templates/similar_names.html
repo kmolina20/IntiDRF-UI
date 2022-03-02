@@ -37,6 +37,8 @@
               </ol>
             </div>
           </div>
+            As user, you has the possibility of introducing the variable corresponding to the name of an activity by which you wishes to filter the data.
+              <br><i>Note. Take into account that you have a dropdown menu where you can search and find the activities names available.</i>
         </div><!-- /.container-fluid -->
       </section>
   
@@ -59,6 +61,8 @@
                         <option>{{ activity.activity_name }}</option>
                         {% endfor %}
                       </select>
+                      <!-- <input type="text" id="activity" name="activity"/>
+                      <input class="favorite styled" type="button" id="but" value="Go"> -->
                     </center>
                   </div>
                 </div>
@@ -170,5 +174,15 @@
         });  
     </script>
     
+    <!-- <script>
+      let text = activiti.value
+      button.addEventListener('click', updateButton);
+      function updateButton() {
+        if (button.value === 'Go') {
+          button.value = 'Stop machine';
+          activitiesList(text)
+        }
+      } -->
+  </script>
 
 {% endblock %}
