@@ -10,7 +10,7 @@ from IntiApp.serializersApi import general_serializer
 from IntiApp.authentication_mixins import Authentication
 
 #class PersonViewSet(Authentication, viewsets.ModelViewSet):
-class PersonViewSet(viewsets.ModelViewSet):
+class PersonViewSet(Authentication,viewsets.ModelViewSet):
     serializer_class = general_serializer.PersonSerializer
     
     #permission_classes = (IsAuthenticated,) 

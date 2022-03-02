@@ -1,5 +1,7 @@
 from IntiApp.authentication import ExpiringTokenAuthentication
 
+from django.shortcuts import render
+
 from rest_framework.authentication import get_authorization_header
 from rest_framework import status
 from rest_framework.response import Response
@@ -34,13 +36,7 @@ class Authentication(object):
         return None
     
     def dispatch(self, request, *args, **kwargs):
-        user = self.get_user(request)
-        # found token in request
-        if user is not None:
+        if (request.user.is_superuser):
             return super().dispatch(request, *args, **kwargs)
-        
-        response = Response({'error': 'Credentials have not been sent'},status = status.HTTP_400_BAD_REQUEST)
-        response.accepted_renderer = JSONRenderer()
-        response.accepted_media_type = 'application/json'
-        response.renderer_context = {}
-        return response
+        else:
+            return render(request,'405.html') 

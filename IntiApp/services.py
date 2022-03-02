@@ -1,5 +1,6 @@
 import requests
 
+from IntiApp.viewsApi.conection import conexion
 from IntiApp.models import *
 
 def get_activities():
@@ -32,3 +33,24 @@ def get_geographies():
 def get_flows_activities():
     geographies = Activity.objects.values('id','comment_technology').distinct()
     return geographies 
+
+def get_versions():
+    versions = Version.objects.values('id','version').distinct().order_by('id')
+    return versions
+
+def numberActivitiesVersion():
+    data = {}
+    data = []
+    cursor1 = conexion.cursor()
+    for i in range(1,27):
+        select = "SELECT count(id) FROM public.activity where version_id='"+str(i)+"';"
+        select2 = "SELECT distinct version FROM version where id='"+str(i)+"';"
+        cursor1.execute(select)
+        select = cursor1.fetchall()
+        cursor1.execute(select2)
+        select2 = cursor1.fetchall()
+        data.append({
+            "version": str(select2[0][0]),
+            "count": str(select[0][0])
+        })
+    return data

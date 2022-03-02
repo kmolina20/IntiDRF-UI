@@ -116,4 +116,12 @@ def intermediate_exchange(request):
 
     return render(request,'intermediate_exchange.html',context)
 
-    
+def activities(request):
+    context = {
+        'versions': get_versions(),   
+        'numbersAct': numberActivitiesVersion(),
+    }
+    return render(request,'activities.html',context)
+
+def start_page(request):
+    return render(request,'start_page.html')

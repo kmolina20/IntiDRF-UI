@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Inti App | Activities</title>
+{% endblock %}
+
+{% block extra_css %}
+    <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.css' %}">
+  <!-- Boostrap-Select -->
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap-select/css/bootstrap-select.min.css' %}">
+
+{% endblock %}
+
+{% block main %}
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Activities</h1>
+              <p class="text-justify">
+                Dashboard in charge of managing the metadata information to manage life cycle inventory (LCI) data sets.
+              </p>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{% url 'inti:index' %}">Home</a></li>
+                <li class="breadcrumb-item active">Activities</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+
+        <div class="container-fluid">
+          
+          <div class="row">
+            <div class="col-12">
+              <!-- jQuery Knob -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <i class="far fa-chart-bar"></i>
+                    Number of Activities by Ecoinvent Version
+                  </h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <div class="row">
+                    {% for numberAct in numbersAct %} 
+                      <div class="col-6 col-md-2 text-center">
+                        <input type="text" class="knob" value="{{ numberAct.count }}" data-width="100" data-height="100" data-fgColor="#3c8dbc" readonly="readonly" data-min="0" data-max="20000">
+                        <div class="knob-label">{{ numberAct.version }}</div>
+                        <br>
+                      </div>
+                      <!-- ./col -->
+                    {% endfor %}
+                  </div>
+                  <!-- /.row -->
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+              
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Metrics</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="row-fluid">
+                        <center>
+                          <label>Ecoinvent Version:</label>
+                          <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="version" name="version">
+                            {% for version in versions %} 
+                            <option data-subtext="Format" value="{{ version.id }}">{{ version.version }}</option>
+                            {% endfor %}
+                          </select>
+                        </center>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AREA CHART -->
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Number of Activities vs Year</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart">
+                    <canvas id="areaChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+  
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script> 
+    <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script> 
+    <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+    <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+  
+
+    <script>
+        function activitiesList(version){
+        $.ajax({
+          url: "/inti/activities/"+version+"/dates/",   
+          type: "get",
+          dataType: "json",
+          cache: false,
+          success: function(response){
+            var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
+            var areaChartData = {
+              labels  : ['< 2011', '2011 - 2012', '2012 - 2013', '2013 - 2014', '2013 - 2014', '2015 - 2016', '2016 - 2017','2017 - 2018','2018 - 2019','2019 - 2020','2020 >'],
+              datasets: [
+                {
+                  label               : 'Digital Goods',
+                  backgroundColor     : 'rgba(60,141,188,0.9)',
+                  borderColor         : 'rgba(60,141,188,0.8)',
+                  pointRadius          : false,
+                  pointColor          : '#3b8bba',
+                  pointStrokeColor    : 'rgba(60,141,188,1)',
+                  pointHighlightFill  : '#fff',
+                  pointHighlightStroke: 'rgba(60,141,188,1)',
+                  data                : [response[0]['< 2011'], response[0]['2011 - 2012'], 
+                  response[0]['2012 - 2013'], response[0]['2013 - 2014'], response[0]['2014 - 2015'], 
+                  response[0]['2015 - 2016'], response[0]['2016 - 2017'],response[0]['2017 - 2018'],
+                  response[0]['2018 - 2019'],response[0]['2019 - 2020'],response[0]['2020 >']]
+                },
+              ]
+            }
+            var areaChartOptions = {
+              maintainAspectRatio : false,
+              responsive : true,
+              legend: {
+                display: false
+              },
+              scales: {
+                xAxes: [{
+                  gridLines : {
+                    display : false,
+                  }
+                }],
+                yAxes: [{
+                  gridLines : {
+                    display : false,
+                  }
+                }]
+              }
+            }
+
+            // This will get the first returned node in the jQuery collection.
+            new Chart(areaChartCanvas, {
+              type: 'line',
+              data: areaChartData,
+              options: areaChartOptions
+            })
+          },
+          error: function(response){
+            console.log("error");
+          }
+        });
+      }
+    </script>
+
+    <script>
+        var select = document.getElementById('version');
+        select.addEventListener('change',
+        function(){
+            //$('#activitiesTable').DataTable().destroy();
+            var selectedOption = this.options[select.selectedIndex];
+            console.log(selectedOption.value + ': ' + selectedOption.text);
+            activitiesList(selectedOption.value)
+        });  
+    </script>
+    
+
+{% endblock %}

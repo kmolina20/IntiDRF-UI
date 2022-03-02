@@ -190,3 +190,63 @@ class ActivityViewSet(viewsets.ModelViewSet):
             return Response({'response': 'no data found'})
         else:
             return Response(d2)
+
+    @action(detail=True)
+    def dates(self, request, pk=None):
+        data = {}
+        data = []
+        cursor1 = conexion.cursor()
+        select = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date<='20110101';"
+        select1 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20110101' and start_date<='20120101';"
+        select2 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20120101' and start_date<='20130101';"
+        select3 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20130101' and start_date<='20140101';"
+        select4 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20140101' and start_date<='20150101';"
+        select5 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20150101' and start_date<='20160101';"
+        select6 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20160101' and start_date<='20170101';"
+        select7 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20170101' and start_date<='20180101';"
+        select8 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20180101' and start_date<='20190101';"
+        select9 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='20190101' and start_date<='20200101';"
+        select10 = "SELECT count(*) FROM activity_index ai, version_name_index vni WHERE vni.activity_index_id=ai.id and vni.version_id='"+pk+"' and ai.start_date>='2020101';"
+        cursor1.execute(select)
+        select = cursor1.fetchall()
+        cursor1.execute(select1)
+        select1 = cursor1.fetchall()
+        cursor1.execute(select2)
+        select2 = cursor1.fetchall()
+        cursor1.execute(select3)
+        select3 = cursor1.fetchall()
+        cursor1.execute(select4)
+        select4 = cursor1.fetchall()
+        cursor1.execute(select5)
+        select5 = cursor1.fetchall()
+        cursor1.execute(select6)
+        select6 = cursor1.fetchall()
+        cursor1.execute(select7)
+        select7 = cursor1.fetchall()
+        cursor1.execute(select8)
+        select8 = cursor1.fetchall()
+        cursor1.execute(select9)
+        select9 = cursor1.fetchall()
+        cursor1.execute(select10)
+        select10 = cursor1.fetchall()
+        data.append({
+            "< 2011": str(select[0][0]),
+            "2011 - 2012": str(select1[0][0]),
+            "2012 - 2013": str(select2[0][0]),
+            "2013 - 2014": str(select3[0][0]),
+            "2014 - 2015": str(select4[0][0]),
+            "2015 - 2016": str(select5[0][0]),
+            "2016 - 2017": str(select6[0][0]),
+            "2017 - 2018": str(select7[0][0]),
+            "2018 - 2019": str(select8[0][0]),
+            "2019 - 2020": str(select9[0][0]),
+            "2020 >": str(select10[0][0]),
+        })
+        s1 = json.dumps(data)
+        d1 = json.loads(s1)
+        d2=self.paginate_queryset(d1)
+        # d2=d1
+        if len(select) == 0:
+            return Response({'response': 'no data found'})
+        else:
+            return Response(d2)
