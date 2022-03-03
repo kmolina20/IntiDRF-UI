@@ -86,7 +86,7 @@ class IntermediateExchangeViewSet(viewsets.ModelViewSet):
                 "intermediate exchange id": str(row[0]),
                 "intermediate exchange name": str(row[1]),
                 "version": str(row[2]),
-                #"activity name id": str(row[3]),
+                # "activity name id": str(row[3]),
                 "activity name": str(row[4]),
                 "activity index id": str(row[5]),
             })
