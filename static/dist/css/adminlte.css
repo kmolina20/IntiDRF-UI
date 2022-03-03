@@ -619,6 +619,13 @@ pre code {
   padding-left: 7.5px;
 }
 
+.col-lg-home {
+  position: center;
+  width: 100%;
+  padding-right: 7.5px;
+  padding-left: 7.5px;
+}
+
 .col {
   -ms-flex-preferred-size: 0;
   flex-basis: 0;
