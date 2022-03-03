@@ -37,7 +37,7 @@
               </ol>
             </div>
           </div>
-          As user, you has the possibility of introducing the variable corresponding to the version and the variable for the name of an activity by which you wishes to filter the data.
+          As user, you have the possibility of introducing the variable corresponding to the version and the variable for the name of an activity by which you wish to filter the data.
             <br><i>Note. Take into account that the database is populated with versions 3.6 apos, consequential, cut off and 3.7.1 cut off. Also you have a dropdown menu where you can search and find the activities names available.</i>
         </div><!-- /.container-fluid -->
       </section>
@@ -62,12 +62,13 @@
                         {% endfor %}
                       </select>
 
-                      <label>Activity Name:</label>
-                      <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="activity" name="activity">
-                        {% for activity in activities %} 
-                        <option>{{ activity.activity_name }}</option>
+                      <label>Intermediate Exchange Id:</label>
+                      <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="intermediate_exchange" name="intermediate_exchange">
+                        {% for intermediate_exchange in intermediate_exchanges %} 
+                        <option>{{ intermediate_exchange.id }}</option>
                         {% endfor %}
                       </select>
+
                     </center>
                   </div>
                 </div>
@@ -90,6 +91,7 @@
                     <tr>
                       <th>Intermediate Exchange Id</th>
                       <th>Intermediate Exchange Name</th>
+                      <th>Activity Name</th>
                       <th>Version</th>
                     </tr>
                     </thead>
@@ -99,6 +101,7 @@
                     <tr>
                       <th>Intermediate Exchange Id</th>
                       <th>Intermediate Exchange Name</th>
+                      <th>Activity Name</th>
                       <th>Version</th>
                     </tr>
                     </tfoot>
@@ -142,9 +145,9 @@
    
 
     <script>
-        function activitiesList(version,activity_name){
+        function activitiesList(version,intermediate_exchange){
         $.ajax({
-          url: "/inti/activities/alike_flows/?version="+version+"&activity_name="+activity_name,   
+          url: "/inti/activities/alike_flows/?version="+version+"&name="+intermediate_exchange,   
           type: "get",
           dataType: "json",
           cache: false,
@@ -155,6 +158,7 @@
               let fila = '<tr>';
               fila += '<td>' + response[i]['intermediate exchange id'] + '</td>';
               fila += '<td>' + response[i]['intermediate exchange name'] + '</td>';
+              fila += '<td>' + response[i]['activity name'] + '</td>';
               fila += '<td>' + response[i]['version'] + '</td>';
               fila += '</tr>';
               $('#activitiesTable tbody').append(fila);
@@ -173,7 +177,7 @@
 
 <script>
   var selectVersion = document.getElementById('version');
-  var selectActivity = document.getElementById('activity');
+  var selectActivity = document.getElementById('intermediate_exchange');
   var selectedOptionVersion = '';
   var selectedOptionActivity = '';
   
@@ -186,17 +190,17 @@
       }else{
         console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
       }
-    });
+  });
   
-    selectActivity.addEventListener('change',
-  function(){
-    selectedOptionActivity = this.options[selectActivity.selectedIndex];
-    if (selectedOptionVersion.text != undefined){
-        $('#activitiesTable').DataTable().destroy();
-        activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
-      }else{
-        console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
-      }
+  selectActivity.addEventListener('change',
+    function(){
+      selectedOptionActivity = this.options[selectActivity.selectedIndex];
+      if (selectedOptionVersion.text != undefined){
+          $('#activitiesTable').DataTable().destroy();
+          activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
+        }else{
+          console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
+        }
   });
 </script>
     
