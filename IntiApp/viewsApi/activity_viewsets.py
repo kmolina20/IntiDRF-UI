@@ -175,18 +175,20 @@ class ActivityViewSet(viewsets.ModelViewSet):
         data = {}
         data = []
         cursor1 = conexion.cursor()
-        select = "SELECT IE.ID, IE.NAME, v.version FROM ACTIVITY_INTERMEDIATE_EXCHANGE AIE, INTERMEDIATE_EXCHANGE IE, ACTIVITY A, ACTIVITY_NAME AN, VERSION_NAME_INDEX VNI, ACTIVITY_INDEX AI, VERSION V WHERE AIE.OUTPUT_GROUP = '0' AND AIE.INTERMEDIATE_EXCHANGE_ID = IE.ID AND AIE.ACTIVITY_ID = A.ID AND A.ACTIVITY_INDEX_ID = AI.ID AND VNI.ACTIVITY_INDEX_ID = AI.ID AND VNI.ACTIVITY_NAME_ID = AN.ID AND VNI.VERSION_ID = V.ID AND V.version = '"+v_id+"' AND IE.NAME LIKE '%"+ie_name+"%'"
+        select = "SELECT IE.ID, IE.NAME, an.activity_name, v.version FROM ACTIVITY_INTERMEDIATE_EXCHANGE AIE, INTERMEDIATE_EXCHANGE IE, ACTIVITY A, ACTIVITY_NAME AN, VERSION_NAME_INDEX VNI, ACTIVITY_INDEX AI, VERSION V WHERE AIE.OUTPUT_GROUP = '0' AND AIE.INTERMEDIATE_EXCHANGE_ID = IE.ID AND AIE.ACTIVITY_ID = A.ID AND A.ACTIVITY_INDEX_ID = AI.ID AND VNI.ACTIVITY_INDEX_ID = AI.ID AND VNI.ACTIVITY_NAME_ID = AN.ID AND VNI.VERSION_ID = V.ID AND V.version = '"+v_id+"' AND IE.NAME LIKE '%"+ie_name+"%'"
         cursor1.execute(select)
         select = cursor1.fetchall()
         for row in select:
             data.append({
                 "intermediate exchange id": str(row[0]),
                 "intermediate exchange name": str(row[1]),
-                "version": str(row[2])
+                "activity name": str(row[2]),
+                "version": str(row[3])
             })
         s1 = json.dumps(data)
         d1 = json.loads(s1)
         d2=self.paginate_queryset(d1)
+        # d2=d1
         if len(select) == 0:
             return Response({'response': 'no data found'})
         else:
