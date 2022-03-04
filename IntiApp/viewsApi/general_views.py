@@ -1,4 +1,5 @@
 import json
+from traceback import print_tb
 from django.http.response import HttpResponse
 import services
 import requests
@@ -75,15 +76,15 @@ def index(request):
 
 def alike_flows(request):
     context = {
-        'versions': get_version_names(),
-        'activities': get_activity_name(),
+        'versions': get_version_specific_names(),
+        'intermediate_exchanges': get_intermediate_exchange_name(),
     }
 
     return render(request,'alike_flows.html',context)
 
 def activities_version(request):
     context = {
-        'versions': get_version_names(),
+        'versions': get_version_specific_names(),
     }
 
     return render(request,'activities_version.html',context)
@@ -110,7 +111,7 @@ def flows(request):
 
 def intermediate_exchange(request):
     context = {
-        'versions': get_version_names(),
+        'versions': get_version_specific_names(),
         'intermediate_exchanges': get_intermediate_exchange(),
     }
 
@@ -118,7 +119,7 @@ def intermediate_exchange(request):
 
 def activities(request):
     context = {
-        'versions': get_versions(),   
+        'versions': get_version_specific_names(),   
         'numbersAct': numberActivitiesVersion(),
     }
     return render(request,'activities.html',context)

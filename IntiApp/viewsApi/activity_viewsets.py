@@ -254,3 +254,28 @@ class ActivityViewSet(viewsets.ModelViewSet):
             return Response({'response': 'no data found'})
         else:
             return Response(d2)
+
+    @action(detail=False)
+    def count_versions(self, request):
+        data = {}
+        data = []
+        cursor1 = conexion.cursor()
+        for i in range(1,27):
+            select = "SELECT count(id) FROM public.activity where version_id='"+str(i)+"';"
+            select2 = "SELECT distinct version FROM version where id='"+str(i)+"';"
+            cursor1.execute(select)
+            select = cursor1.fetchall()
+            cursor1.execute(select2)
+            select2 = cursor1.fetchall()
+            data.append({
+                "version": str(select2[0][0]).replace('ecoinvent ','').replace('consequential','cq').replace('cut off','cf').replace('apos','ap'),
+                "count": str(select[0][0])
+            })
+        s1 = json.dumps(data)
+        d1 = json.loads(s1)
+        #d2=self.paginate_queryset(d1)
+        d2=d1
+        if len(select) == 0:
+            return Response({'response': 'no data found'})
+        else:
+            return Response(d2)
