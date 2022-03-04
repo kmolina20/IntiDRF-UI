@@ -86,6 +86,7 @@
                     <tr>
                       <th>Activity Index Id</th>
                       <th>Activity Name</th>
+                      <th>Version Name</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -94,6 +95,7 @@
                     <tr>
                         <th>Activity Index Id</th>
                         <th>Activity Name</th>
+                        <th>Version Name</th>
                     </tr>
                     </tfoot>
                   </table>
@@ -149,6 +151,7 @@
               let fila = '<tr>';
               fila += '<td>' + response[i]['activity index id'] + '</td>';
               fila += '<td>' + response[i]['activity name'] + '</td>';
+              fila += '<td>' + response[i]['version name'] + '</td>';
               fila += '</tr>';
               $('#activitiesTable tbody').append(fila);
             }
