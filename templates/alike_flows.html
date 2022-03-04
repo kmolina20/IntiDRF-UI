@@ -57,15 +57,17 @@
                     <center>
                       <label>Ecoinvent Version:</label>
                       <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="version" name="version">
+                        <option disabled selected>Choose a option:</option>
                         {% for version in versions %} 
                         <option data-subtext="Format">{{ version.version }}</option>
                         {% endfor %}
                       </select>
 
-                      <label>Intermediate Exchange Id:</label>
+                      <label>Intermediate Exchange Name:</label>
                       <select class="selectpicker" data-show-subtext="true" data-live-search="true" id="intermediate_exchange" name="intermediate_exchange">
+                        <option disabled selected>Choose a option:</option>
                         {% for intermediate_exchange in intermediate_exchanges %} 
-                        <option>{{ intermediate_exchange.id }}</option>
+                        <option>{{ intermediate_exchange.name }}</option>
                         {% endfor %}
                       </select>
 
@@ -82,7 +84,7 @@
   
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title">DataTable with default features</h3>
+                  <h3 class="card-title">Data Preview</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
