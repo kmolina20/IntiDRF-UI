@@ -151,14 +151,15 @@ class ActivityViewSet(viewsets.ModelViewSet):
         data = {}
         data = []
         cursor1 = conexion.cursor()
-        select = "select DISTINCT an.activity_name, an.id, vni.activity_index_id from activity_name an, version_name_index vni where an.activity_name like '%"+name+"%' AND vni.activity_name_id=an.id"
+        select = "select DISTINCT an.activity_name, an.id, vni.activity_index_id, v.version from activity_name an, version_name_index vni, version v where v.id=vni.version_id and an.activity_name like '%"+name+"%' AND vni.activity_name_id=an.id"
         cursor1.execute(select)
         select = cursor1.fetchall()
         for row in select:
             data.append({
                 "activity name": str(row[0]),
                 #"activity name id": str(row[1]),
-                "activity index id": str(row[2])
+                "activity index id": str(row[2]),
+                "version name": str(row[3])
             })
         s1 = json.dumps(data)
         d1 = json.loads(s1)
