@@ -265,3 +265,15 @@ class RequestIdName(models.Model):
 
     class Meta:
         managed = False
+
+# Create the models for upload a file
+
+class Document(models.Model):
+    title = models.CharField(max_length = 200, blank=True, null=False)
+    uploadedFile = models.FileField(upload_to = "uploaded_files/", blank=True, null=False)
+    dateTimeOfUpload = models.DateTimeField(auto_now = True)
+
+class Query(models.Model):
+    version = models.CharField(max_length = 200)
+    int_exch_id = models.CharField(max_length = 200)
+    int_exch_name = models.CharField(max_length = 200)

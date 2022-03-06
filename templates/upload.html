@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Inti App | Activities by Version</title>
+{% endblock %}
+
+{% block extra_css %}
+    <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.css' %}">
+  <!-- Boostrap-Select -->
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap-select/css/bootstrap-select.min.css' %}">
+
+  <!-- NEW -->
+  <!-- Required meta tags-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Title Page-->
+  <title>Registro archivos</title>
+  <!-- Icons font CSS-->
+  <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+  <link href="{% static 'vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
+  <!-- Font special for pages-->
+  <!-- <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> -->
+  <!-- Vendor CSS-->
+  <link href="{% static 'vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+  <link href="{% static 'vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+  <!-- Main CSS-->
+  <link href="{% static 'css/main.css' %}" rel="stylesheet" media="all">
+
+{% endblock %}
+
+{% block main %}
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Upload File</h1>
+              <p>
+                Upload a file archive, in <i>.zip</i> format
+              </p>
+              
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{% url 'inti:index' %}">Home</a></li>
+                <li class="breadcrumb-item active">Upload File
+                </li>
+                
+              </ol>
+            </div>
+          </div>
+            As user, you have the possibility of upload a ecoinvent LCA, in the .zip format into de database so it will be available for look into the meta information.
+              <br><i>Note. We take into account the confidenciality of the data, so the database only save the metadata.</i>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+    <!-- Main content -->
+    <section class="content"></section>
+        <div class="card">
+            <div class="card-header">
+            <h3 class="card-title">Upload a File</h3>
+            </div>
+            <div class="card-body">
+            <div class="row-fluid">
+                <form "{% url 'inti:upload_files' %}" method="POST" enctype="multipart/form-data">
+                    <div class="card-body">
+                        <label class="label">Choose a file with .zip format:</label>
+                        <input class="input" type="file" name="uploaded_file" required>
+                        <!-- <input class="input--style-4" type="file" name="uploaded_file"> -->
+                    </div>
+                    
+                    <div class="card-body">
+                        <label class="label">Version:</label>
+                        <div class="form-control">
+                            <!-- <div class="rs-select2 js-select-simple select--no-search"> -->
+                            <select name="file_title" required>
+                                <option value="">choose a version</option>
+                                <option>ecoinvent 3.6 cut off</option>
+                                <option>ecoinvent 3.6 apos</option>
+                                <option>ecoinvent 3.6 consequential</option>
+                                <option>ecoinvent 3.7 cut off</option>
+                                <option>ecoinvent 3.7 apos</option>
+                                <option>ecoinvent 3.7 consequential</option>
+                                <option>ecoinvent 3.7.1 cut off</option>
+                                <option>ecoinvent 3.7.1 apos</option>
+                                <option>ecoinvent 3.7.1 consequential</option>
+                            </select>
+                            <div class="select-dropdown"></div>
+                        </div>
+                    </div>
+                    
+                    {% csrf_token %}
+                    <table width="100%">
+                        <tbody><tr>
+                        <td style="width:300px;"> </td>
+                        <td style="width:20px;"> 
+                            <div class="card-footer clearfix">
+                                <input class="btn btn-primary float-right" type="submit" value="Upload">
+                            </div>
+                        </td>
+                        <td style="width:300px;"> </td>
+                        </tr>
+                      </tbody></table>
+                    <!-- <div class="card-footer clearfix">
+                        <input class="btn btn-primary float-right" type="submit" value="Upload">
+                    </div> -->
+                </form>
+            </div>
+            </div>
+        </div>
+
+        <!-- <div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <div class="card-body">
+                        <h2 class="title">Upload a File</h2>
+                        <form "{% url 'inti:upload_files' %}" method="POST" enctype="multipart/form-data">
+                            <div class="p-t-15">
+                                <label class="label">Choose a file with .zip format:</label>
+                                <input class="input--style-4" type="file" name="uploaded_file">
+                            </div>
+                            <div class="input-group">
+                                <label class="label">Version:</label>
+                                <div class="rs-select2 js-select-simple select--no-search">
+                                    <select name="file_title">
+                                        <option disabled="disabled" selected="selected">choose a version</option>
+                                        <option>ecoinvent 3.6 cut off</option>
+                                        <option>ecoinvent 3.6 apos</option>
+                                        <option>ecoinvent 3.6 consequential</option>
+                                        <option>ecoinvent 3.7 cut off</option>
+                                        <option>ecoinvent 3.7 apos</option>
+                                        <option>ecoinvent 3.7 consequential</option>
+                                        <option>ecoinvent 3.7.1 cut off</option>
+                                        <option>ecoinvent 3.7.1 apos</option>
+                                        <option>ecoinvent 3.7.1 consequential</option>
+                                    </select>
+                                    <div class="select-dropdown"></div>
+                                </div>
+                            </div>
+                            {% csrf_token %}
+                            <div class="p-t-15">
+                                <input class="btn btn--radius-2 btn--blue" type="submit" value="Upload">
+                            </div>
+                        </form>
+                        <div class="p-t-15">
+                            <input class="btn btn--radius-2 btn--blue"
+                                onclick="location.href='http://127.0.0.1:8000/inti/home'" value="Home">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </section>
+
+  
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script> 
+    <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script> 
+    <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+    <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+
+    <!-- Jquery JS-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/daterangepicker.js' %}"></script>
+    <!-- Main JS-->
+    <script src="{% static 'js/global.js' %}"></script>
+
+{% endblock %}
+
