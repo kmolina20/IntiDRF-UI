@@ -4,6 +4,7 @@ from IntiApp.models import models
 from IntiApp.models import Document
 import requests
 from django.shortcuts import render
+from django.contrib import messages
 
 from zipfile import ZipFile
 import os
@@ -14,10 +15,10 @@ from shutil import rmtree
 from .conection import conexion
 
 #SETTING NOMBRE DIRECTORIOS
-# directorio = '/home/kamila/T_projects/env_inti_api/IntiDRF-UI'  #PATH DEL PARCHIVO
-# dir_temp = '/home/kamila/T_projects/env_inti_api/IntiDRF-UI/temp/' #PATH DESTINO
-directorio = '/home/esigcha/IntiDRF-UI'  #PATH DEL PARCHIVO
-dir_temp = '/home/esigcha/IntiDRF-UI/temp/' #PATH DESTINO
+directorio = '/home/kamila/T_projects/env_inti_api/IntiDRF-UI'  #PATH DEL PARCHIVO
+dir_temp = '/home/kamila/T_projects/env_inti_api/IntiDRF-UI/temp/' #PATH DESTINO
+# directorio = '/home/esigcha/IntiDRF-UI'  #PATH DEL PARCHIVO
+# dir_temp = '/home/esigcha/IntiDRF-UI/temp/' #PATH DESTINO
 
 md = '/MasterData/'
 ds = '/datasets/'
@@ -26,54 +27,72 @@ def upload_files(request):
     form = Document()
     if request.method == "POST":
         print(request.POST["file_title"])
-        print(request.FILES["uploaded_file"])
-        # Fetching the form data
-        file_title = request.POST["file_title"]
-        uploaded_file = request.FILES["uploaded_file"]
+        print(str(request.FILES["uploaded_file"]))
+        if str(request.FILES["uploaded_file"]).find('.zip') != -1:
+            print("esta en formato .zip")
+            messages.add_message(request=request, level=messages.SUCCESS, message="Extracting Files For Analysis")
+            # Fetching the form data
+            file_title = request.POST["file_title"]
+            uploaded_file = request.FILES["uploaded_file"]
+            
+            # Saving the information in the database
+            document = Document(
+                title=file_title,
+                uploadedFile=uploaded_file
+            )
+            document.save()
+            
+            #UNZIP THE UPLOADED FILE INTO A DIRECTORY check
+            with ZipFile(directorio+document.uploadedFile.url , 'r') as zip:
+                zip.extractall(directorio+'/temp')
+                print('File is unzipped in temp folder')
+            
+            # NAME OF THE UNZIP FILE
+            a = os.path.split(document.uploadedFile.url)
+            nombre_carpeta = os.path.splitext(a[1])
+            b=nombre_carpeta[0].find('_')
+            new = nombre_carpeta[0][:b] + ' ' + nombre_carpeta[0][b+1:]
+            print("new")
+            print(new)
+            route = dir_temp+new+md
+            routeDS = dir_temp+new+ds
+            # route = dir_temp+'ecoinvent 3.6_apos_ecoSpold02'+md
+            # routeDS = dir_temp+'ecoinvent 3.6_apos_ecoSpold02'+ds
+            
+            #METHODS TO READ THE FILE AND ADD TO THE DATABASE
+            if (os.path.exists(route + 'Companies.xml')):
+                companies(route + 'Companies.xml')
+            if (os.path.exists(route + 'Sources.xml')):
+                sources(route + 'Sources.xml')
+            if (os.path.exists(route + 'Persons.xml')):
+                persons(route + 'Persons.xml')
+            if (os.path.exists(route + 'ActivityNames.xml')):
+                activity_name(route + 'ActivityNames.xml')
+            if (os.path.exists(route + 'Geographies.xml')):
+                geography(route + 'Geographies.xml')
+            if (os.path.exists(route + 'Units.xml')):
+                unit(route + 'Units.xml')
+            if (os.path.exists(route + 'IntermediateExchanges.xml')):
+                intermediateExchange(route + 'IntermediateExchanges.xml')
+            if (os.path.exists(route + 'SystemModels.xml')):
+                system_model(route + 'SystemModels.xml')
+            id_version = search_version(document.title)
+            # print("id_version %s" % id_version)
+            if (os.path.exists(route + 'ActivityIndex.xml')):
+                activityIndexEntry(route + 'ActivityIndex.xml', id_version)
+            if (os.path.exists(routeDS)):
+                leerActividadGenerica(routeDS, id_version)
+            # rmtree(dir_temp+'ecoinvent 3.6_apos_ecoSpold02')
+            rmtree(dir_temp)
+            rmtree(directorio+'/uploaded_files')
+            messages.add_message(request=request, level=messages.SUCCESS, message="Data Upload Complete")
+            # conexion.close()
         
-        # Saving the information in the database
-        document = Document(
-            title=file_title,
-            uploadedFile=uploaded_file
-        )
-        document.save()
-        
-        #UNZIP THE UPLOADED FILE INTO A DIRECTORY check
-        with ZipFile(directorio+document.uploadedFile.url , 'r') as zip:
-           zip.extractall(directorio+'/temp')
-           print('File is unzipped in temp folder')
-        
-        # NAME OF THE UNZIP FILE
-        a = os.path.split(document.uploadedFile.url)
-        nombre_carpeta = os.path.splitext(a[1])
-        b=nombre_carpeta[0].find('_')
-        new = nombre_carpeta[0][:b] + ' ' + nombre_carpeta[0][b+1:]
-        route = dir_temp+new+md
-        routeDS = dir_temp+new+ds
-        # route = dir_temp+'ecoinvent 3.6_apos_ecoSpold02'+md
-        # routeDS = dir_temp+'ecoinvent 3.6_apos_ecoSpold02'+ds
-        
-        #METHODS TO READ THE FILE AND ADD TO THE DATABASE
-        # companies(route + 'Companies.xml')
-        #sources(route + 'Sources.xml')
-        #persons(route + 'Persons.xml')
-        #activity_name(route + 'ActivityNames.xml')
-        #geography(route + 'Geographies.xml')
-        #unit(route + 'Geographies.xml')
-        #intermediateExchange(route + 'IntermediateExchanges.xml')
-        #system_model(route + 'SystemModels.xml')
-        #property(route + 'Properties.xml')
-        # cambiar el id de la version si se cambia
-        id_version = search_version(document.title)
-        print("id_version %s" % id_version)
-        #activityIndexEntry(route + 'ActivityIndex.xml', id_version)
-        #leerActividadGenerica(routeDS, id_version)
-        
-        # rmtree(dir_temp+'ecoinvent 3.6_apos_ecoSpold02')
-        rmtree(dir_temp)
-        rmtree(directorio+'/uploaded_files')
-
+        else:
+            print("otro")
+            messages.add_message(request=request, level=messages.ERROR, message="Wrong Files, Please Try Again With The Correct Formats")
     # documents = Document.objects.all()
+        # conexion.close()
 
     return render(request, "upload.html", {"form": form})
     # return render(request, "upload.html", context={
@@ -83,7 +102,7 @@ def upload_files(request):
 # METHODS TO READ THE FILE AND ADD TO THE DATABASE 
 
 
-#AVOIS THIS FUNCTION> quey_files
+#AVOID THIS FUNCTION> quey_files
 def query_files(request):
     print('query_files')
     id_version = ''
@@ -163,7 +182,7 @@ def companies(route):
             conexion.commit()
         else:
             print("persona ya existe")
-        conexion.close()
+    # conexion.close()
     return
 
 def sources(route):
@@ -211,7 +230,7 @@ def sources(route):
             datos = (source_id, source_type, year, volume_no, first_author, additional_authors, title, names_of_editors, short_name, page_numbers, journal, title_of_anthology, place_of_publications, publisher, comment)
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def persons(route):
@@ -242,7 +261,7 @@ def persons(route):
             # print("%s, id: %s company: %s,"%(i, person_id, company_id))
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def activity_name(route):
@@ -272,7 +291,7 @@ def activity_name(route):
             print("%s, id: %s activity_name: %s,"%(i, activity_name_id, activity_name))
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def geography(route):
@@ -316,7 +335,7 @@ def geography(route):
             print("%s, id: %s "%(i, geography_id))
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def unit(route):
@@ -353,7 +372,7 @@ def unit(route):
             print("%s, id: %s unit_name: %s,"%(i, unit_id, unit_name))
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()   
+    # conexion.close()   
     return
 
 def intermediateExchange(route):
@@ -383,7 +402,7 @@ def intermediateExchange(route):
             datos = (id, unit_id, name)
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def system_model(route):
@@ -420,7 +439,7 @@ def system_model(route):
             # print("%s, id: %s system_model_name: %s,"%(i, system_model_id, system_model_name))
             cursor1.execute(insert, datos)
             conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def search_version(nombre_version):
@@ -485,7 +504,7 @@ def activityIndexEntry(route, version):
                 datos = (activity_index_id, activity_name_id, version)
                 cursor1.execute(insert, datos)
                 conexion.commit()
-    conexion.close()
+    # conexion.close()
     return
 
 def ordenamientoBurbuja(matriz,tam):
@@ -650,7 +669,7 @@ def leerActividadGenerica(route, version):
                 select = "SELECT MAX(id) AS id FROM activity"
                 cursor1.execute(select)
                 activity_id = cursor1.fetchall()
-                insert = "insert into acitivity_intermediate_exchange(activity_id, intermediate_exchange_id, variable_name, input_group, output_group) values (%s, %s, %s, %s, %s)"
+                insert = "insert into activity_intermediate_exchange(activity_id, intermediate_exchange_id, variable_name, input_group, output_group) values (%s, %s, %s, %s, %s)"
                 datos = (activity_id[0], intermediate_exchange_id, variable_name, input_group, output_group)
                 cursor1.execute(insert, datos)
                 conexion.commit()
@@ -687,5 +706,5 @@ def leerActividadGenerica(route, version):
                 conexion.commit()
                 i += 1
 
-        conexion.close()
+    # conexion.close()
     return
