@@ -1,4 +1,6 @@
 import json
+import requests
+import pandas as pd
 from traceback import print_tb
 from django.http.response import HttpResponse
 import services
@@ -100,7 +102,7 @@ def geographies_activities(request):
     context = {
         'geographies': get_geographies(),
     }
-    print(context)
+
     return render(request,'geographies_activities.html',context)
 
 def flows(request):
@@ -126,3 +128,46 @@ def activities(request):
 
 def start_page(request):
     return render(request,'start_page.html')
+
+def get_activities_csv(request):
+
+        url = 'http://127.0.0.1:8000/inti/activities' 
+        #params = {'year': year, 'author': author}
+        r = requests.get(url)
+        try :
+            activities = r.json()
+            #print(activities)
+            print(activities['next'])
+            while (activities['next'] is not None):
+                print(activities['next'])
+                r = requests.get(activities['next'])
+                activities = r.json()
+            activities_list = {'activities':activities['results']}
+            info = json.loads(activities_list)
+            df=pd.json_normalize(info)
+            responseCSVActivities = HttpResponse(content_type = 'text/csv')
+            responseCSVActivities['Content-Disposition'] = 'attachment;filename="activites.csv"'
+
+            
+            df.to_csv(responseCSVActivities)
+            return responseCSVActivities
+        except:
+            print('Error')
+'''       
+        url = 'http://localhost:8000/inti/activities' 
+        r = requests.get(url)
+        activities = r.json()
+        while (activities['next'] is not None):
+            r = requests.get(activities['next'])
+            activities = r.json()
+            info = json.loads(activities)
+            df=pd.json_normalize(info)
+            #df.to_csv("dowload.csv")
+            all_csv=pd.concat([all_csv,df])
+        responseCSVActivities = HttpResponse(content_type = 'text/csv')
+        responseCSVActivities['Content-Disposition'] = 'attachment;filename="activites.csv"'
+
+        
+        all_csv.to_csv(responseCSVActivities)
+        return responseCSVActivities
+'''

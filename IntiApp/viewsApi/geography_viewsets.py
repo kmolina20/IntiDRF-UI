@@ -1,4 +1,10 @@
 import json
+import csv
+import requests
+
+from django.http.response import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -60,3 +66,34 @@ class GeographyViewSet(viewsets.ModelViewSet):
             return Response({'response': 'no data found'})
         else:
             return Response({'response': d2})
+
+@csrf_exempt
+def export_geographies(request,geography):
+    index = 1
+    responseUsuarioCSV = HttpResponse(content_type = 'text/csv')
+    writer = csv.writer(responseUsuarioCSV,delimiter=';')
+    writer.writerow(['Activity Index Id','Activity Name','Geography Name'])
+    
+    url = 'http://127.0.0.1:8000/inti/geographies/{0}/activities/?page=1'.format(geography) 
+    r = requests.get(url)
+    
+    while r.status_code != 404:
+        url = 'http://127.0.0.1:8000/inti/geographies/{0}/activities/?page={1}'.format(geography,index) 
+        r = requests.get(url)
+        if r.status_code != 404:
+            activities = r.json()
+            print(activities)
+            
+            for row in activities['response']:
+                activity = []
+                activity.append(row['activity index id']) 
+                activity.append(row['activity name'])
+                activity.append(row['geography name'])
+                writer.writerow(activity)
+            
+            index = index+1
+            print(url)
+
+    responseUsuarioCSV['Content-Disposition'] = 'attachment;filename="Activities_by_Geographies.csv"'
+
+    return responseUsuarioCSV

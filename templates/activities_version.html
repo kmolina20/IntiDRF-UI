@@ -78,7 +78,12 @@
   
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title">Data Preview</h3>
+                    <h3 class="card-title p-3">All Data:</h3>
+                    <ul class="nav nav-pills ml-auto p-2">
+                      <li class="nav-item">
+                        <button type="button" class="btn btn-outline-info btn-block btn-flat" onclick="generarCSV();"><i class="fa fa-file-csv"></i> to download</button>
+                      </li>
+                    </ul>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -160,6 +165,15 @@
             console.log("error");
           }
         });
+      }
+    </script>
+
+    <script>
+      function generarCSV(){
+        var value = this.document.getElementById('version').value;
+        if (value != 'Choose a option:'){
+          location.replace("/inti/csv_same_names/"+value);
+        }
       }
     </script>
 

@@ -84,7 +84,12 @@
   
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title">Data Preview</h3>
+                  <h3 class="card-title p-3">All Data:</h3>
+                  <ul class="nav nav-pills ml-auto p-2">
+                    <li class="nav-item">
+                      <button type="button" class="btn btn-outline-info btn-block btn-flat" onclick="generarCSV();"><i class="fa fa-file-csv"></i> to download</button>
+                    </li>
+                  </ul>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -177,34 +182,44 @@
       }
     </script>
 
-<script>
-  var selectVersion = document.getElementById('version');
-  var selectActivity = document.getElementById('intermediate_exchange');
-  var selectedOptionVersion = '';
-  var selectedOptionActivity = '';
-  
-  selectVersion.addEventListener('change',
-    function(){
-      selectedOptionVersion = this.options[selectVersion.selectedIndex];
-      if (selectedOptionActivity.text != undefined){
-        $('#activitiesTable').DataTable().destroy();
-        activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
-      }else{
-        console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
-      }
-  });
-  
-  selectActivity.addEventListener('change',
-    function(){
-      selectedOptionActivity = this.options[selectActivity.selectedIndex];
-      if (selectedOptionVersion.text != undefined){
-          $('#activitiesTable').DataTable().destroy();
-          activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
-        }else{
-          console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
+    <script>
+      function generarCSV(){
+        var value = this.document.getElementById('version').value;
+        var value2 = this.document.getElementById('intermediate_exchange').value;
+        if (value != 'Choose a option:' && value2 != 'Choose a option:'){
+          location.replace("/inti/csv_alike_flows/"+value+"/"+value2+"/");
         }
-  });
-</script>
+      }
+    </script>
+
+    <script>
+      var selectVersion = document.getElementById('version');
+      var selectActivity = document.getElementById('intermediate_exchange');
+      var selectedOptionVersion = '';
+      var selectedOptionActivity = '';
+      
+      selectVersion.addEventListener('change',
+        function(){
+          selectedOptionVersion = this.options[selectVersion.selectedIndex];
+          if (selectedOptionActivity.text != undefined){
+            $('#activitiesTable').DataTable().destroy();
+            activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
+          }else{
+            console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
+          }
+      });
+      
+      selectActivity.addEventListener('change',
+        function(){
+          selectedOptionActivity = this.options[selectActivity.selectedIndex];
+          if (selectedOptionVersion.text != undefined){
+              $('#activitiesTable').DataTable().destroy();
+              activitiesList(selectedOptionVersion.value,selectedOptionActivity.text)
+            }else{
+              console.log(selectedOptionVersion.value + ': ' + selectedOptionActivity.text);
+            }
+      });
+    </script>
     
 
 {% endblock %}

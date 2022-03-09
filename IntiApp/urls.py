@@ -13,7 +13,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from IntiApp.viewsApi import login_view,upload_file_requests, upload_LCA_file,general_views
+from IntiApp.viewsApi import login_view,upload_file_requests, upload_LCA_file,general_views,activity_viewsets,geography_viewsets,intermediate_exchange_viewsets
 
 #from IntiApp.viewsApi import general_views
 
@@ -51,6 +51,12 @@ urlpatterns=[
     path('flows/',login_required(general_views.flows),name='flows'), 
     path('intermediate_exchange/',login_required(general_views.intermediate_exchange),name='intermediate_exchange'),
     path('activities_dashboard/',login_required(general_views.activities),name='activities_dashboard'),
+    path('csv_activities/',login_required(general_views.get_activities_csv),name='csv_activities'),
+    path('csv_same_names/<str:version>/',login_required(activity_viewsets.export_same_names),name='csv_same_names'),
+    path('csv_similar_names/<str:activityName>/',login_required(activity_viewsets.export_similar_names),name='csv_similar_names'),
+    path('csv_alike_flows/<str:Version>/<str:activityName>/',login_required(activity_viewsets.export_alike_flows),name='csv_alike_flows'), 
+    path('csv_geographies/<str:geography>/',login_required(geography_viewsets.export_geographies),name='csv_geographies'),
+    path('csv_intermediate_exchange/<str:intermediate_exchange>/<str:Version>/',login_required(intermediate_exchange_viewsets.export_intermediate_exchange),name='csv_intermediate_exchange'),
     path('upload/', login_required(upload_LCA_file.upload_files), name = "upload_files"), 
     path('query/', login_required(upload_LCA_file.query_files), name = "query_files"),
     path('accounts/login/', LoginView.as_view(template_name='login.html'), name="login"),

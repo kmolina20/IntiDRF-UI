@@ -1,4 +1,10 @@
 import json
+import csv
+import requests
+
+from django.http.response import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -97,3 +103,35 @@ class IntermediateExchangeViewSet(viewsets.ModelViewSet):
             return Response({'response': 'no data found'})
         else:
             return Response({'response': d2})
+
+@csrf_exempt
+def export_intermediate_exchange(request,intermediate_exchange,Version):
+    index = 1
+    responseUsuarioCSV = HttpResponse(content_type = 'text/csv')
+    writer = csv.writer(responseUsuarioCSV,delimiter=';')
+    writer.writerow(['Intermediate Exchange Id','Intermediate Exchange Name','Activity Index Id','Activity Name','Version Name'])
+    
+    url = 'http://127.0.0.1:8000/inti/intermediate_exchanges/{0}/activities/?page=1&version={1}'.format(intermediate_exchange,Version) 
+    r = requests.get(url)
+    
+    while r.status_code != 404:
+        url = 'http://127.0.0.1:8000/inti/intermediate_exchanges/{0}/activities/?page={2}&version={1}'.format(intermediate_exchange,Version,index) 
+        r = requests.get(url)
+        if r.status_code != 404:
+            activities = r.json()
+
+            for row in activities['response']:
+                activity = []
+                activity.append(row['intermediate exchange id'])
+                activity.append(row['intermediate exchange name']) 
+                activity.append(row['activity index id'])
+                activity.append(row['activity name'])
+                activity.append(row['version'])
+                writer.writerow(activity)
+            
+            index = index+1
+            print(url)
+
+    responseUsuarioCSV['Content-Disposition'] = 'attachment;filename="Activities_by_Intermediate_Exchanges&Versions.csv"'
+
+    return responseUsuarioCSV
