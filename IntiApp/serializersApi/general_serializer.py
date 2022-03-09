@@ -1,4 +1,4 @@
-from IntiApp.models import Version, Activity, Company, Person, Geography, Unit, ActivityIntermediateExchange, ActivityIndex, ActivityName, ActivityPerson, DataGeneratorAndPublication, IntermediateExchange, Property, Source, Synonym, SystemModel, VersionNameIndex, RequestActivityIndex, RequestIdName, RequestName, RequestId, RequestVersionNameIndex
+from IntiApp.models import Correspondence, Version, Activity, Company, Person, Geography, Unit, ActivityIntermediateExchange, ActivityIndex, ActivityName, ActivityPerson, DataGeneratorAndPublication, IntermediateExchange, Property, Source, Synonym, SystemModel, VersionNameIndex, RequestActivityIndex, RequestIdName, RequestName, RequestId, RequestVersionNameIndex
 from rest_framework import serializers
 
 class VersionSerializer(serializers.ModelSerializer):
@@ -110,6 +110,11 @@ class SynonymSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Synonym
+        fields = '__all__'
+
+class CorrespondenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Correspondence
         fields = '__all__'
 
 

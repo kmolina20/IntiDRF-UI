@@ -109,6 +109,13 @@
                         <td style="width:300px;"> </td>
                         </tr>
                       </tbody></table>
+                      {% if messages %}
+                      <ul class="messages">
+                          {% for message in messages %}
+                          <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+                          {% endfor %}
+                      </ul>
+                      {% endif %}
                     <!-- <div class="card-footer clearfix">
                         <input class="btn btn-primary float-right" type="submit" value="Upload">
                     </div> -->

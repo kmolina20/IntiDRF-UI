@@ -235,3 +235,15 @@ class Query(models.Model):
     version = models.CharField(max_length = 200)
     int_exch_id = models.CharField(max_length = 200)
     int_exch_name = models.CharField(max_length = 200)
+
+# Create models for correspondence files
+
+class Correspondence(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    activity_intermediate_exchange = models.ForeignKey('ActivityIntermediateExchange', models.DO_NOTHING)
+    #next_activity_intermediate_exchange = models.ForeignKey('ActivityIntermediateExchange', models.DO_NOTHING)
+    differences = models.CharField(max_length=1000, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'correspondence'
