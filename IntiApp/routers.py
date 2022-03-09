@@ -1,7 +1,8 @@
+from IntiApp.viewsApi.correspondence_viewsets import CorrespondenceViewSet
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.routers import DefaultRouter
 
-from IntiApp.viewsApi import version_viewsets, company_viewsets, geography_viewsets, person_viewsets, unit_viewsets, activity_viewsets, activity_intermediate_exchange_viewsets, activity_index_viewsets, activity_name_viewsets, activity_person_viewsets, data_generator_publication_viewsets, intermediate_exchange_viewsets, property_viewsets, source_viewsets, synonym_viewsets, system_model_viewsets, version_name_index_viewsets
+from IntiApp.viewsApi import correspondence_viewsets, version_viewsets, company_viewsets, geography_viewsets, person_viewsets, unit_viewsets, activity_viewsets, activity_intermediate_exchange_viewsets, activity_index_viewsets, activity_name_viewsets, activity_person_viewsets, data_generator_publication_viewsets, intermediate_exchange_viewsets, property_viewsets, source_viewsets, synonym_viewsets, system_model_viewsets, version_name_index_viewsets
 
 
 router = DefaultRouter()
@@ -28,6 +29,6 @@ router.register(r'sources',source_viewsets.SourceViewSet, basename= 'source')
 router.register(r'synonyms',synonym_viewsets.SynonymViewSet, basename= 'synonym')
 router.register(r'system_models',system_model_viewsets.SystemModelViewSet, basename= 'system model')
 router.register(r'version_name_indexes',version_name_index_viewsets.VersionNameIndexViewSet, basename= 'version name index')
-
+router.register(r'correspondences',correspondence_viewsets.CorrespondenceViewSet, basename= 'correspondence')
 
 urlpatterns = router.urls
