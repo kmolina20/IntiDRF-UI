@@ -48,6 +48,7 @@ class CorrespondenceViewSet(viewsets.ModelViewSet):
         ie_name=request.GET.get('ie-name','') # ie.name='bagasse, from sugarcane'
         data = {}
         data = []
+        select1_1 = ''
         cursor1 = conexion.cursor()
         select1 = "select c.activity_intermediate_exchange, c.next_activity_intermediate_exchange, a.activity_index_id from correspondence c, activity_intermediate_exchange aie, intermediate_exchange ie, activity a where ie.id=aie.intermediate_exchange_id and c.activity_intermediate_exchange=aie.id and aie.activity_id=a.id and a.activity_index_id='"+ai_id+"' and ie.name='"+ie_name+"';"
         cursor1.execute(select1)
